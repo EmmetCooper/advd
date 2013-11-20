@@ -20,3 +20,8 @@ This script is coded on:
 Debian 3.7.2-0 i686 GNU/Linux
 
 It would be awesome if you'll provide multi-distro support. ;)
+
+INSTALLATION
+============
+
+git clone https://github.com/EmmetCooper/advd
