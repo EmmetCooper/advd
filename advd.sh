@@ -10,7 +10,7 @@
 if [ "$1" = "h" ]; then
 	echo "USAGE: ./download.sh <URL>"
 	exit
-elif [ "$1" != "" ]; then 
+elif [ "$1" = NULL ]; then 
 	echo "" 
 else
 	echo "USAGE: ./download.sh <URL>"
