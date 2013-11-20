@@ -10,11 +10,11 @@
 if [ "$1" = "h" ]; then
 	echo "USAGE: ./download.sh <URL>"
 	exit
-elif [ "$1" = NULL ]; then 
-	echo "" 
-else
+elif [ "$1" = '' ]; then 
 	echo "USAGE: ./download.sh <URL>"
 	exit
+else
+	echo ""
 fi
 
 which youtube-dl >/dev/null 2>&1
@@ -143,6 +143,8 @@ fi
 
 videocheck
 audiocheck
+echo ""
+echo ""
 echo "Now downloading $1"
 youtube-dl --abort-on-error -q -F "$1"
 echo "Please choose what video format you want to download?"
