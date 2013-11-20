@@ -1,5 +1,12 @@
 #!/bin/bash
-
+#Automatic Debian Video Downloader
+#Simple script by yours truly.
+#
+#
+#
+#Still buggy so take it easy. ;)
+#
+#It would be awesome if you'd provide multi-distro support
 if [ "$1" = "h" ]; then
 	echo "USAGE: ./download.sh <URL>"
 	exit
