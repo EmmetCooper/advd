@@ -14,12 +14,12 @@ elif [ "$1" = '' ]; then
 	echo "USAGE: ./download.sh <URL>"
 	exit
 else
-	echo ""
+	echo "ADVD Beta V0.1"
 fi
 
 which youtube-dl >/dev/null 2>&1
 if [ $? -eq 0 ]; then
-	echo "youtube-dl loaded."
+	echo "[*]youtube-dl loaded."
 else 
 	echo "[!] youtube-dl was not found. Please wait while we download it for you."
 	aptitude install youtube-dl
@@ -27,30 +27,30 @@ fi
 
 which ffmpeg >/dev/null 2>&1
 if [ $? -eq 0 ]; then
-	echo "ffmpeg loaded."
+	echo "[*]ffmpeg loaded."
 else
 	echo "[!] ffmpeg was not found. Please wait while we download it for you."
 	aptitude install ffmpeg
 fi
 
-echo "Please be patient while we check environment parameters for your download. If errors persist, we'll fix them for you."
+echo "[*]Please be patient while we check environment parameters for your download. If errors persist, we'll fix them for you."
 echo ""
-echo "Checking Directories"
+echo "[*]Checking Directories"
 ls VIDEOS >/dev/null 2>&1
 if [ $? -eq 0 ]; then
-	echo "VIDEOS folder is present."
+	echo "[**]VIDEOS folder is present."
 else
 	mkdir VIDEOS/
-	echo "VIDEOS folder was not found.Making it."
+	echo "[!]VIDEOS folder was not found.Making it."
 fi
 
 
 ls AUDIOS >/dev/null 2>&1
 if [ $? -eq 0 ]; then
-	echo "AUDIOS folder is present"
+	echo "[**]AUDIOS folder is present"
 else 
 	mkdir AUDIOS/
-	echo "AUDIOS folder was not found.Making it."
+	echo "[!]AUDIOS folder was not found.Making it."
 fi
 
 #Checking if any video or audio file is present within the current folder.
@@ -81,7 +81,8 @@ else
 	echo "MP4: CLEAR"
 fi
 }
-
+echo "[!] PURGING INCOMPLETE DOWNLOADS"
+rm *.part
 audiocheck () {
 #aac,mp3,ogg,m4a,opus,vorbis,wav
 ls *.aac >/dev/null 2>&1
@@ -140,13 +141,32 @@ else
 	echo "WAV:Clear"
 fi
 }
-
+endfunc () {
+echo "+++++++++++++++++++++++++DOWNLOAD COMPLETE++++++++++++++++++++++++++++++"
+echo "Do you want to move downloaded files into AUDIOS & VIDEOS folders?[y] or [n]"
+read chs
+if [ $chs = "y" ]; then
+        videocheck
+        audiocheck
+else
+        echo "Now exiting."
+        exit
+fi
+}
 videocheck
 audiocheck
 echo ""
 echo ""
-echo "Now downloading $1"
-youtube-dl --abort-on-error -q -F "$1"
+echo "[*]Verifying Link"
+youtube-dl --abort-on-error -q -F "$1" >/dev/null 2>&1
+if [ $? -eq 0 ]; then
+	echo "[*] Now downloading $1"
+	youtube-dl --abort-on-error -q -F "$1"
+else
+	echo "[!] Error occured. Please check if the url is valid or your connection is active"
+	echo "Now exiting."
+	exit
+fi
 echo "Please choose what video format you want to download?"
 echo "***THIS MAY TAKE TIME DEPENDING ON VIDEO QUALITY AND LENGTH"
 read ch
@@ -170,17 +190,47 @@ if [ $? -eq 0 ]; then
 	else
 		echo "Skipping conversion."
 	fi
+	endfunc
 else
 	echo '[!] An error occured during download'
 fi
 
-echo "+++++++++++++++++++++++++DOWNLOAD COMPLETE++++++++++++++++++++++++++++++"
-echo "Do you want to move downloaded files into AUDIOS & VIDEOS folders?[y] or [n]"
-read chs
-if [ $chs = "y" ]; then
-	videocheck
-	audiocheck
+ls *.webm >/dev/null 2>&1
+if [ $? -eq 0 ]; then
+	VI=`ls *.webm`
+	V=$VI.mp3
+	echo "Do you want to convert it to MP3 Audio file?[y] or [n]"
+	read chc
+	if [ $chc = "y" ]; then
+		ffmpeg -i "$VI" "$V"
+		#lame "$V"
+		echo "Do you want to delete the video file downloaded?[y] or [n]"
+		read nch
+		if [ $nch = "y" ]; then
+			rm "$VI"
+		else
+			echo "Video file retained."
+		fi
+	else
+		echo "Skipping conversion."
+	fi
+	endfunc
 else
-	echo "Now exiting."
-	exit
+	echo "[!] An error occured during download."
+fi
+
+ls *.flv >/dev/null 2>&1
+if [ $? -eq 0 ]; then
+	VI=`ls *.flv`
+	V=$VI.mp3
+	echo "Do you want to delete the video file downloaded?[y] or [n]"
+	read nch
+	if [ $nch = "y" ]; then
+
+	else
+		echo "Video file retained"
+	fi
+	endfunc
+else
+	echo "[!] An error occured during download."
 fi
