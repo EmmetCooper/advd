@@ -82,7 +82,15 @@ else
 fi
 }
 echo "[!] PURGING INCOMPLETE DOWNLOADS"
-rm *.part
+ls *.part >/dev/null 2>&1
+if [ $? -eq 0 ]; then 
+	rm *.part
+	PL=`ls *.part`
+	echo "$PL has been deleted"
+else
+	echo "[*]INCOMPLETE DOWNLOAD CLEARS"
+fi
+
 audiocheck () {
 #aac,mp3,ogg,m4a,opus,vorbis,wav
 ls *.aac >/dev/null 2>&1
@@ -193,6 +201,7 @@ if [ $? -eq 0 ]; then
 	endfunc
 else
 	echo '[!] An error occured during download'
+	exit
 fi
 
 ls *.webm >/dev/null 2>&1
@@ -217,6 +226,7 @@ if [ $? -eq 0 ]; then
 	endfunc
 else
 	echo "[!] An error occured during download."
+	exit
 fi
 
 ls *.flv >/dev/null 2>&1
@@ -233,4 +243,5 @@ if [ $? -eq 0 ]; then
 	endfunc
 else
 	echo "[!] An error occured during download."
+	exit
 fi
