@@ -1,17 +1,28 @@
 #!/bin/bash
-#Automatic Debian Video Downloader
+#Automatic Debian Video Downloader Beta V0.1
 #Simple script by yours truly.
-#
+#by EmmetCooper
 #
 #
 #Still buggy so take it easy. ;)
 #
 #It would be awesome if you'd provide multi-distro support
+#
+#
+#
+#
+#
+# FUTURE SUPPORT
+#	-> PLAYLIST SUPPORT
+#	-> URL FILE SUPPORT
+#	-> PROXY OPTION
+#	-> TOR Proxy
+#	-> Continue Previous Download
 if [ "$1" = "h" ]; then
-	echo "USAGE: ./download.sh <URL>"
+	echo "USAGE: ./advd.sh <URL>"
 	exit
 elif [ "$1" = '' ]; then 
-	echo "USAGE: ./download.sh <URL>"
+	echo "USAGE: ./advd.sh <URL>"
 	exit
 else
 	echo "ADVD Beta V0.1"
@@ -27,10 +38,10 @@ fi
 
 which ffmpeg >/dev/null 2>&1
 if [ $? -eq 0 ]; then
-	echo "[*]ffmpeg loaded."
+	echo "[*]ffmpeg/avconv loaded."
 else
 	echo "[!] ffmpeg was not found. Please wait while we download it for you."
-	aptitude install ffmpeg
+	aptitude install ffmpeg avconv
 fi
 
 echo "[*]Please be patient while we check environment parameters for your download. If errors persist, we'll fix them for you."
@@ -88,7 +99,7 @@ if [ $? -eq 0 ]; then
 	PL=`ls *.part`
 	echo "$PL has been deleted"
 else
-	echo "[*]INCOMPLETE DOWNLOAD CLEARS"
+	echo "[*]INCOMPLETE DOWNLOAD CLEAR"
 fi
 
 audiocheck () {
@@ -156,6 +167,7 @@ read chs
 if [ $chs = "y" ]; then
         videocheck
         audiocheck
+	exit
 else
         echo "Now exiting."
         exit
@@ -166,7 +178,7 @@ audiocheck
 echo ""
 echo ""
 echo "[*]Verifying Link"
-youtube-dl --abort-on-error -q -F "$1" >/dev/null 2>&1
+youtube-dl --console-title --abort-on-error -q -F "$1" >/dev/null 2>&1
 if [ $? -eq 0 ]; then
 	echo "[*] Now downloading $1"
 	youtube-dl --abort-on-error -q -F "$1"
@@ -192,11 +204,15 @@ if [ $? -eq 0 ]; then
 		read nch
 		if [ $nch =  "y" ]; then
 			rm "$VI"
+			echo "DONE."
+			
 		else
 			echo "Video file retained."
+			
 		fi
 	else
 		echo "Skipping conversion."
+		
 	fi
 	endfunc
 else
@@ -217,11 +233,15 @@ if [ $? -eq 0 ]; then
 		read nch
 		if [ $nch = "y" ]; then
 			rm "$VI"
+			echo "DONE."
+			
 		else
 			echo "Video file retained."
+			
 		fi
 	else
 		echo "Skipping conversion."
+		
 	fi
 	endfunc
 else
@@ -236,9 +256,12 @@ if [ $? -eq 0 ]; then
 	echo "Do you want to delete the video file downloaded?[y] or [n]"
 	read nch
 	if [ $nch = "y" ]; then
-
+		rm "*.flv"
+		echo "DONE."
+		
 	else
 		echo "Video file retained"
+		
 	fi
 	endfunc
 else
